@@ -89,7 +89,7 @@ DATABASES = {
 
 # User stuff below
 
-LOGIN_URL = 'rango:login'
+LOGIN_URL = 'shelves:login'
 
 # If True, users can register.
 REGISTRATION_OPEN = True
@@ -98,7 +98,7 @@ REGISTRATION_OPEN = True
 REGISTRATION_AUTO_LOGIN = True
 
 # The URL that Django redirects users to after logging in.
-LOGIN_REDIRECT_URL = 'rango:index'
+LOGIN_REDIRECT_URL = 'shelves:index'
 
 # The page users are directed to if they are not logged in.
 # This was set in a previous chapter. The registration package uses this, too.

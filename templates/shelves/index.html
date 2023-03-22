@@ -1,0 +1,72 @@
+{% extends 'shelves/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+Homepage
+{% endblock %}
+
+{% block body_block %}
+<div>
+    <div class="jumbotron p-4">
+        <div class="container">
+            {% if user.is_authenticated %}
+            <h1 class="jumbotron-heading">Welcome back, {{ user.username }}!</h1>
+            {% else %}
+            <h1 class="jumbotron-heading">Welcome to Shelves</h1>
+            {% endif %}
+            <div>
+                <h5>{{ boldmessage }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-6">
+                <div class="card-body">
+                    <h2>Top Scoring Media</h2>
+                    <p class="card-text">
+                        {% if medias %}
+                    <ul class="list-group">
+                        {% for media in medias %}
+                        <li class="list-group-item">
+                            <a href="{% url 'shelves:show_media' media.slug %}">
+                                {{ media.title }}</a>
+                            <b class="float-right">Score: {{ media.avgScore }}</b>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <strong>No media has been uploaded to the website.</strong>
+                    {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-6">
+                <div class="card-body">
+                    <h2>Most Liked Posts</h2>
+                    <p class="card-text">
+                        {% if posts %}
+                    <ul class="list-group">
+                        {% for post in posts %}
+                        <li class="list-group-item">
+                            <a href="{% url 'shelves:show_media' post.media.slug %}">{{ post.title }}</a>
+                            <b class="float-right">Likes: {{ post.likes }}</b>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <strong>No posts have been uploaded to the website.</strong>
+                    {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

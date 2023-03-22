@@ -1,0 +1,52 @@
+{% extends 'shelves/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Medias
+{% endblock %}
+
+{% block body_block %}
+<div>
+    <div class="jumbotron p-4">
+        <div class="container">
+            <h1 class="jumbotron-heading">Medias</h1>
+            <h5 class="jumbotron-heading">Categorised by Type</h5>
+        </div>
+    </div>
+</div>
+
+<body>
+    <div class="panel-body">
+        <div class="list-group">
+            {% for type, objects in media_collection.items %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-6">
+                            <div class="card-body" id="{{ type }}">
+                                <h2>{{ type|title }}</h2>
+                                <p class="card-text">
+                                    {% if objects %}
+                                    <ul class="list-group">
+                                        {% for object in objects %}
+                                        <li class="list-group-item">
+                                            <a href="{% url 'shelves:show_media' object.media.slug %}">
+                                                "{{ object.media.title }}" by {{ object.media.writer }}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% else %}
+                                        <strong>There are no {{ type }} present.</strong>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+{% endblock %}

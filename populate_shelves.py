@@ -120,7 +120,7 @@ def populate():
     for m in Media.objects.all():
        for p in Post.objects.filter(media=m):
            print(f'- {m}: {p}')
-               
+           
 
 def add_post(media, user, title, rating, comment, publishDate, likes):
     p = Post.objects.get_or_create(media=media, user=user, title=title)[0]

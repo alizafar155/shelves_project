@@ -138,7 +138,7 @@ class UserProfile(models.Model):
 
     # Fields
     picture = models.ImageField(blank=True)
-    age = models.IntegerField(validators=[MinValueValidator(13)])
+    # age = models.IntegerField(validators=[MinValueValidator(13)])
     joinDate = models.DateField(default=datetime.date.today)
 
     # To string

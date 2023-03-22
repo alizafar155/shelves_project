@@ -1,0 +1,62 @@
+{% extends 'shelves/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+{% if media %}
+    {{ media.title }}
+{% else %}
+    Unknown
+{% endif %}
+{% endblock %}
+
+{% block body_block %}
+{% if media %}
+<div class="jumbotron p-4">
+    <div class="container">
+        <h1>{{ media.title }}</h1>
+        <h5>made by {{ media.writer }}</h5>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <ul type="bulletpoint">
+            <li>Average Score: {{ media.avgScore }}</li>
+            <li>Type: {{ media.type|title }}</li>
+            <li>Language: {{ media.language }}</li>
+            <li>Release Date: {{ media.releaseDate }}</li>
+            <!-- Need to enter code for cover image -->
+        </ul>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-2 themed-grid-col">Title</div>
+        <div class="col-md-2 themed-grid-col">Rating</div>
+        <div class="col-md-2 themed-grid-col">Comment</div>
+        <div class="col-md-2 themed-grid-col">Publish Date</div>
+        <div class="col-md-2 themed-grid-col">Likes</div> <br>
+        <hr style="width:85%">
+        {% if posts %}
+            {% for post in posts %}
+                <div class="col-md-2 themed-grid-col">{{ post.title }}</div>
+                <div class="col-md-2 themed-grid-col">{{ post.rating }} out of 10 stars</div>
+                <div class="col-md-2 themed-grid-col">{{ post.comment }}</div>
+                <div class="col-md-2 themed-grid-col">{{ post.publishDate }}</div>
+                <div class="col-md-2 themed-grid-col">{{ post.likes }}</div>
+                <hr style="width:85%">
+            {% endfor %}
+        {% else %}
+            <strong>No posts have been uploaded for this {{ media.type }}.</strong>
+        {% endif %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <a href="{% url 'shelves:add_post' media.slug %}"><Strong>Add Post?</Strong></a><br>
+
+    {% else %}
+    <p>You have to be logged in to add a post! <a href="/accounts/login/"> <Strong>Log in</Strong> </a> </p>
+    {% endif %}
+
+</div>
+{% else %}
+The media you specified is not available. Return to the <a href="{% url 'shelves:index' %}"><strong>Homepage</strong>.</a>
+{% endif %}
+{% endblock %}

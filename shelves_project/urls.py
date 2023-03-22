@@ -15,7 +15,27 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
+from django.conf import settings
+from django.conf.urls.static import static
+from shelves import views
+from registration.backends.simple.views import RegistrationView
+from django.urls import reverse
+
+
+class MyRegistrationView(RegistrationView):
+    def get_success_url(self, user):
+        return reverse('shelves:register_profile')
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-]
+        path('admin/', admin.site.urls),
+        path('', include('shelves.urls'), name='index'),
+        
+        # New line below -- don't forget the slash after register!
+        path('accounts/register/',
+            MyRegistrationView.as_view(),
+            name='registration_register'),
+        
+        path('accounts/', include('registration.backends.simple.urls')),
+        ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
