@@ -36,11 +36,12 @@
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item "><a class="nav-link" href="{% url 'shelves:medias' %}">Collection</a></li>
+                    <li class="nav-item "><a class="nav-link" href="{% url 'shelves:media_collection' %}">Collection</a></li>
                     <li class="nav-item "><a class="nav-link" href="{% url 'shelves:about' %}">About</a></li>
                     <li class="nav-item "><a class="nav-link" href="{% url 'shelves:contact_us' %}">Contact Us</a></li>
                     {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'shelves:add_media' %}">Add Media</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'shelves:profile' user.username %}">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'auth_logout' %}?next=/">Logout</a></li>
                     {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'registration_register' %}">Register Here</a></li>

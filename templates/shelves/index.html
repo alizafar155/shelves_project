@@ -32,7 +32,7 @@ Homepage
                     <ul class="list-group">
                         {% for media in medias %}
                         <li class="list-group-item">
-                            <a href="{% url 'shelves:show_media' media.slug %}">
+                            <a href="{% url 'shelves:show_media' media.type media.slug %}">
                                 {{ media.title }}</a>
                             <b class="float-right">Score: {{ media.avgScore }}</b>
                         </li>
@@ -54,7 +54,7 @@ Homepage
                     <ul class="list-group">
                         {% for post in posts %}
                         <li class="list-group-item">
-                            <a href="{% url 'shelves:show_media' post.media.slug %}">{{ post.title }}</a>
+                            <a href="{% url 'shelves:show_media' post.media.type post.media.slug %}">{{ post.title }}</a>
                             <b class="float-right">Likes: {{ post.likes }}</b>
                         </li>
                         {% endfor %}

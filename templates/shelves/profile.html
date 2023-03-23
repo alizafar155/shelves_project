@@ -1,0 +1,93 @@
+{% extends 'shelves/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    {{ selected_user.username }}'s Profile
+{% endblock %}
+
+{% block body_block %}
+<div class="jumbotron p-4">
+    <div class="container">
+        <h1 class="jumbotron-heading">{{ selected_user.username }}'s Profile</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        {% if user_profile.picture %}
+        <img src="{{ MEDIA_URL }}{{ user_profile.picture }}" width="150" height="150"
+            alt="{{ selected_user.username }}'s profile image" />
+        {% else %}
+        <img src="{% static 'images/anonUser.png' %}" width="200" height="200"
+            alt="{{ selected_user.username }}'s profile image" />
+        {% endif %}
+        <br>
+        <div>
+            <p>
+                <strong>Join date: {{ user_profile.joinDate }}</strong>
+            </p>
+            {% if selected_user == user %}
+            <form method="post" action="." enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Update" />
+            </form>
+            <br>
+            <form action="{% url 'shelves:delete_account' selected_user.username %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete Account</button>
+            </form>
+            <br>
+            {% endif %}
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-6">
+                <div class="card-body">
+                    <h2>Your Posts: {{ post.count }}</h2>
+                    <p class="card-text">
+                    <ul class="list-group">
+                        {% for post in posts %}
+                        <li class="list-group-item">
+                            <a href="{% url 'shelves:show_media' post.media.type post.media.slug%}">{{ post.title }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-body">
+            <div class="list-group">
+                {% for type, objects in media_collection.items %}
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-6">
+                                    <div class="card-body" id="{{ type }}">
+                                        <h2>Your {{ type|title }}</h2>
+                                        <p class="card-text">
+                                            {% if objects %}
+                                            <ul class="list-group">
+                                                {% for object in objects %}
+                                                <li class="list-group-item">
+                                                    <a href="{% url 'shelves:show_media' object.type object.slug %}">
+                                                        "{{ object.title }}" (written by {{ object.writer }})</a>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                            {% else %}
+                                                <strong>You have not added {{ type }} to the website.</strong>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

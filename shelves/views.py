@@ -4,6 +4,9 @@ from shelves.forms import MediaForm, BookForm, MovieForm, ShowForm, SongForm, Po
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.views import View
+from django.utils.decorators import method_decorator
+from django.contrib.auth.models import User
 
 
 def index(request):
@@ -25,7 +28,7 @@ def index(request):
     return response
 
 
-def show_media(request, media_title_slug):
+def show_media(request, media_title_slug, media_type):
     context_dict = {}
     
     try:
@@ -58,7 +61,7 @@ def list_medias(request):
     context_dict = {}
     context_dict['media_collection'] = media_collection
     
-    response = render(request, 'shelves/medias.html', context=context_dict)
+    response = render(request, 'shelves/media_collection.html', context=context_dict)
 
     return response
 
@@ -71,15 +74,17 @@ def add_media(request):
         media_form = MediaForm(request.POST)
 
         if media_form.is_valid():
-            media = media_form.save(commit=True)
+            media = media_form.save(commit=False)
+            media.user = request.user
+            media.save()
             
-            if media.type == "Book":
+            if media.type == "book":
                 return redirect(reverse('shelves:add_book_details', kwargs={'media_title_slug': media.slug}))
-            elif media.type == "Movie":
+            elif media.type == "movie":
                 return redirect(reverse('shelves:add_movie_details', kwargs={'media_title_slug': media.slug}))
-            elif media.type == "Show":
+            elif media.type == "show":
                 return redirect(reverse('shelves:add_show_details', kwargs={'media_title_slug': media.slug}))
-            elif media.type == "Song":
+            elif media.type == "song":
                 return redirect(reverse('shelves:add_song_details', kwargs={'media_title_slug': media.slug}))
 
         else:
@@ -110,7 +115,9 @@ def add_book_details(request, media_title_slug):
 
             return redirect(reverse('shelves:show_media',
                                     kwargs={'media_title_slug':
-                                            media_title_slug}))
+                                            media_title_slug,
+                                            'media_type':
+                                            book.media.type}))
         else:
             print(book_form.errors)
 
@@ -140,7 +147,9 @@ def add_movie_details(request, media_title_slug):
 
             return redirect(reverse('shelves:show_media',
                             kwargs={'media_title_slug':
-                                    media_title_slug}))
+                                    media_title_slug,
+                                    'media_type':
+                                    movie.media.type}))
         else:
             print(movie_form.errors)
     
@@ -170,7 +179,9 @@ def add_show_details(request, media_title_slug):
             
             return redirect(reverse('shelves:show_media',
                             kwargs={'media_title_slug':
-                                    media_title_slug}))
+                                    media_title_slug,
+                                    'media_type':
+                                    show.media.type}))
         else:
             print(show_form.errors)
 
@@ -200,7 +211,9 @@ def add_song_details(request, media_title_slug):
             
             return redirect(reverse('shelves:show_media',
                             kwargs={'media_title_slug':
-                                    media_title_slug}))
+                                    media_title_slug,
+                                    'media_type':
+                                    song.media.type}))
         else:
             print(song_form.errors)
 
@@ -258,6 +271,74 @@ def register_profile(request):
     context_dict = {'form': form}
     return render(request, 'shelves/profile_registration.html', context_dict)
 
+
+class ProfileView(View):
+    def get_user_details(self, username):
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return None
+        
+        user_profile = UserProfile.objects.get_or_create(user=user)[0]
+        form = UserProfileForm({'picture': user_profile.picture,})
+        user_posts = Post.objects.filter(user = user.id)
+        user_collection = Media.objects.filter(user = user.id)
+
+        my_dict = {}
+        my_dict['books'] = user_collection.filter(type='book')
+        my_dict['movies'] = user_collection.filter(type='movie')
+        my_dict['shows'] = user_collection.filter(type='show')
+        my_dict['songs'] = user_collection.filter(type='song')
+        
+        return (user, user_profile, form, user_posts, my_dict)
+    
+    @method_decorator(login_required)
+    def get(self, request, username):
+        try:
+            (user, user_profile, form, posts, media_collection) = self.get_user_details(username)
+        except TypeError:
+            return redirect(reverse('shelves:index'))
+        
+        context_dict = {'user_profile': user_profile,
+                        'selected_user': user,
+                        'form': form,
+                        'posts': posts,
+                        'media_collection': media_collection,
+                        }
+        
+        return render(request, 'shelves/profile.html', context_dict)
+    
+    @method_decorator(login_required)
+    def post(self, request, username):
+        try:
+            (user, user_profile, form) = self.get_user_details(username)
+        except TypeError:
+            return redirect(reverse('shelves:index'))
+
+        form = UserProfileForm(
+            request.POST, request.FILES, instance=user_profile)
+
+        if form.is_valid():
+            form.save(commit=True)
+            return redirect('shelves:profile', user.username)
+        else:
+            print(form.errors)
+
+        context_dict = {'user_profile': user_profile,
+                        'selected_user': user,
+                        'form': form}
+
+        return render(request, 'shelves/profile.html', context_dict)
+
+
+@login_required
+def delete_account(request, username):
+    user = User.objects.get(username=username)
+    if request.method == 'POST':
+        user.delete()
+        return redirect('/')
+
+    return render(request, 'profile.html', {'user': user})
 
 def about(request):
     pass

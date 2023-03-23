@@ -89,7 +89,8 @@ def populate():
              }
 
     for media, media_data in medias.items():
-        m = add_media(media, 
+        m = add_media(media,
+            testUser, 
             media_data['type'],
             media_data['coverImage'],
             media_data['writer'], 
@@ -129,8 +130,9 @@ def add_post(media, user, title, rating, comment, publishDate, likes):
     p.likes=likes
     p.save()
 
-def add_media(title, type, coverImage, writer, language, releaseDate):
+def add_media(title, user, type, coverImage, writer, language, releaseDate):
     m = Media.objects.get_or_create(title=title,
+        user=user,
         type=type,
         coverImage=coverImage, 
         writer=writer, 

@@ -12,11 +12,15 @@ urlpatterns = [
 
     path('register_profile/', views.register_profile, name='register_profile'),
 
+    path('profile/<username>/', views.ProfileView.as_view(), name='profile'),
+
+    path('delete/<username>', views.delete_account, name='delete_account'),
+
     path('add_media/', views.add_media, name='add_media'),
 
-    path('medias/', views.list_medias, name='medias'),
+    path('media_collection/', views.list_medias, name='media_collection'),
 
-    path('<slug:media_title_slug>/', views.show_media, name='show_media'),
+    path('media/<str:media_type>/<slug:media_title_slug>/', views.show_media, name='show_media'),
 
     path('<slug:media_title_slug>/add_book_details/', views.add_book_details, name='add_book_details'),
 
@@ -26,6 +30,7 @@ urlpatterns = [
 
     path('<slug:media_title_slug>/add_song_details/', views.add_song_details, name='add_song_details'),
 
-    path('<slug:media_title_slug>/add_post/', views.add_post, name='add_post')
+    path('<slug:media_title_slug>/add_post/', views.add_post, name='add_post'),
+
 
 ]

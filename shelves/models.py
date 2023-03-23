@@ -6,6 +6,9 @@ from django.core.validators import MinValueValidator, MaxValueValidator, MinLeng
 
 
 class Media(models.Model):
+    # FK
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
     # Choice types
     TYPE_CHOICES = (
        ('Book','Book'),
@@ -51,6 +54,7 @@ class Media(models.Model):
     slug = models.SlugField(unique=True)
     
     def save(self, *args, **kwargs):
+        self.type = self.type.lower()
         self.slug = slugify(self.title)
         super(Media, self).save(*args, **kwargs)
     
