@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from shelves.models import Media, Book, Movie, Show, Song, Post, UserProfile
-from shelves.forms import MediaForm, BookForm, MovieForm, ShowForm, SongForm, PostForm
+from shelves.forms import MediaForm, BookForm, MovieForm, ShowForm, SongForm, PostForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -63,6 +63,7 @@ def list_medias(request):
     return response
 
 
+@login_required
 def add_media(request):
     media_form = MediaForm()
 
@@ -87,6 +88,7 @@ def add_media(request):
     return render(request, 'shelves/add_media.html', {'form': media_form})
 
 
+@login_required
 def add_book_details(request, media_title_slug):
     try:
         media = Media.objects.get(slug=media_title_slug)
@@ -116,6 +118,7 @@ def add_book_details(request, media_title_slug):
     return render(request, 'shelves/add_book_details.html', context=context_dict)
 
 
+@login_required
 def add_movie_details(request, media_title_slug):
     try:
         media = Media.objects.get(slug=media_title_slug)
@@ -145,6 +148,7 @@ def add_movie_details(request, media_title_slug):
     return render(request, 'shelves/add_movie_details.html', context=context_dict)
 
 
+@login_required
 def add_show_details(request, media_title_slug):
     try:
         media = Media.objects.get(slug=media_title_slug)
@@ -174,6 +178,7 @@ def add_show_details(request, media_title_slug):
     return render(request, 'shelves/add_show_details.html', context=context_dict)
 
 
+@login_required
 def add_song_details(request, media_title_slug):
     try:
         media = Media.objects.get(slug=media_title_slug)
@@ -201,6 +206,57 @@ def add_song_details(request, media_title_slug):
 
     context_dict = {'form': song_form, 'media': media}
     return render(request, 'shelves/add_song_details.html', context=context_dict)
+
+
+@login_required
+def add_post(request, media_title_slug):
+    try:
+        media = Media.objects.get(slug=media_title_slug)
+    except Media.DoesNotExist:
+        media = None
+
+    if media is None:
+        return redirect('/shelves/')
+
+    post_form = PostForm()
+
+    if request.method == 'POST':
+        post_form = PostForm(request.POST)
+
+        if post_form.is_valid():
+            if media:
+                post = post_form.save(commit=False)
+                post.media = media
+                post.likes = 0
+                post.user = request.user
+                post.save()
+
+                return redirect(reverse('shelves:show_media',
+                                        kwargs={'media_title_slug':
+                                                media_title_slug}))
+        else:
+            print(post_form.errors)
+
+    context_dict = {'form': post_form, 'media': media}
+    return render(request, 'shelves/add_post.html', context=context_dict)
+
+
+@login_required
+def register_profile(request):
+    form = UserProfileForm()
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            user_profile = form.save(commit=False)
+            user_profile.user = request.user
+            user_profile.save()
+            
+            return redirect(reverse('shelves:index'))
+        else:
+            print(form.errors)
+
+    context_dict = {'form': form}
+    return render(request, 'shelves/profile_registration.html', context_dict)
 
 
 def about(request):
