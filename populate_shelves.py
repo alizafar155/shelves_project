@@ -21,8 +21,7 @@ def populate():
                 'likes': 43, },
                 ]
 
-    testMovie = {'location': 'New Zealand',
-                 'duration': datetime.timedelta(hours = 3, minutes = 45)}
+    testMovie = {'duration': datetime.timedelta(hours = 3, minutes = 45)}
     testMoviePost = [
                 {'title': 'The movie was too long',
                 'rating': 3,
@@ -104,9 +103,8 @@ def populate():
             isbn = media_data['concreteMedia']['isbn']
             add_book(m, isbn)
         elif media_data['type'] == 'movie':
-            location = media_data['concreteMedia']['location']
             duration = media_data['concreteMedia']['duration']
-            add_movie(m, location, duration)
+            add_movie(m, duration)
         elif media_data['type'] == 'show':
             seasons = media_data['concreteMedia']['seasons']
             episodes = media_data['concreteMedia']['episodes']
@@ -146,9 +144,8 @@ def add_book(media, isbn):
         isbn=isbn,)[0]
     b.save()
 
-def add_movie(media, location, duration):
+def add_movie(media, duration):
     m = Movie.objects.get_or_create(media=media,
-        location=location,
         duration=duration,)[0]
     m.save()
 

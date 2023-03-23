@@ -6,19 +6,27 @@ from django.core.validators import MinValueValidator, MaxValueValidator, MinLeng
 
 
 class Media(models.Model):
+    # Choice types
+    TYPE_CHOICES = (
+       ('Book','Book'),
+       ('Movie','Movie'),
+       ('Show','Show'),
+       ('Song','Song'),
+    )
+
     # Max-length values
     TITLE_MAX_LENGTH = 50
     WRITER_MAX_LENGTH = 50
     LANG_MAX_LENGTH = 50
     TYPE_MAX_LENGTH = 50
-    
+
     # Fields
     title = models.CharField(max_length=TITLE_MAX_LENGTH, unique=True)
-    type = models.CharField(max_length=TYPE_MAX_LENGTH, default=None)
+    type = models.CharField(max_length=TYPE_MAX_LENGTH, choices=TYPE_CHOICES)
     coverImage = models.ImageField(blank=True)
     writer = models.CharField(max_length=WRITER_MAX_LENGTH)
     language = models.CharField(max_length=LANG_MAX_LENGTH)
-    releaseDate = models.DateField(blank=True)
+    releaseDate = models.DateField(blank=True, validators=[MaxValueValidator(limit_value=datetime.date.today)])
     avgScore = models.FloatField(default=0)
     
     # Keep track of avg. rating for media
@@ -64,12 +72,8 @@ class Book(models.Model):
 class Movie(models.Model):
     # FK
     media = models.OneToOneField(Media, on_delete=models.CASCADE)
-    
-    # Max-length values
-    LOC_MAX_LENGTH = 50
 
     # Fields
-    location = models.CharField(max_length=LOC_MAX_LENGTH)
     duration = models.DurationField(default=datetime.timedelta())
     
     def save(self, *args, **kwargs):

@@ -24,9 +24,23 @@
             <li>Type: {{ media.type|title }}</li>
             <li>Language: {{ media.language }}</li>
             <li>Release Date: {{ media.releaseDate }}</li>
+            {% if media.type|title == "Book" %}
+                <li>ISBN: {{ media.book.isbn }}</li>
+            {% endif %}
+            {% if media.type|title == "Movie" %}
+                <li>Duration: {{ media.movie.duration }}</li>
+            {% endif %}
+            {% if media.type|title == "Show" %}
+                <li>Seasons: {{ media.show.seasons }}</li>
+                <li>Episodes: {{ media.show.episodes }}</li>
+            {% endif %}
+            {% if media.type|title == "Song" %}
+                <li>Duration: {{ media.song.duration }}</li>
+            {% endif %}
             <!-- Need to enter code for cover image -->
         </ul>
     </div>
+    <h5>Posts</h5>
     <div class="row mb-2">
         <div class="col-md-2 themed-grid-col">Title</div>
         <div class="col-md-2 themed-grid-col">Rating</div>
