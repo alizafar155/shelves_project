@@ -117,7 +117,7 @@ class Post(models.Model):
     COMM_MAX_LENGTH = 1000
 
     # Fields
-    title = models.CharField(max_length=TITLE_MAX_LENGTH)
+    title = models.CharField(max_length=TITLE_MAX_LENGTH, unique=False)
     rating = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])
     comment = models.TextField(max_length=COMM_MAX_LENGTH, blank=True)
     publishDate = models.DateField(default=datetime.date.today)
@@ -132,10 +132,10 @@ class Post(models.Model):
         return self.title
     
     # Slug
-    slug = models.SlugField(unique=True)
+    # slug = models.SlugField(unique=True)
     
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
+        # self.slug = slugify(self.title)
         super(Post, self).save(*args, **kwargs)
         self.media.updateAvgScore(media=self.media)
     

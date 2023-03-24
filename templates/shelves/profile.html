@@ -72,7 +72,7 @@
                                                 {% for object in objects %}
                                                 <li class="list-group-item">
                                                     <a href="{% url 'shelves:show_media' object.type object.slug %}">
-                                                        "{{ object.title }}" (written by {{ object.writer }})</a>
+                                                        {{ object.title }}</a>
                                                 </li>
                                                 {% endfor %}
                                             </ul>
