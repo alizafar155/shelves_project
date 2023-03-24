@@ -1,0 +1,13 @@
+bcrypt==4.0.1
+certifi @ file:///C:/b/abs_85o_6fm0se/croot/certifi_1671487778835/work/certifi
+charset-normalizer==3.1.0
+coverage==7.2.2
+Django==2.2.28
+django-registration-redux==2.2
+idna==3.4
+Pillow==9.4.0
+pytz==2022.7.1
+requests==2.28.2
+sqlparse==0.4.3
+urllib3==1.26.15
+wincertstore==0.2
