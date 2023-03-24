@@ -245,6 +245,14 @@ def delete_account(request, username):
 
     return render(request, 'profile.html', {'user': user})
 
+class ListProfilesView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        profiles = UserProfile.objects.all()
+        return render(request,
+                    'shelves/list_profiles.html',
+                    {'user_profile_list': profiles})
+
 def about(request):
     pass
 

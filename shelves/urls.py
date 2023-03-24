@@ -26,5 +26,6 @@ urlpatterns = [
 
     path('<slug:media_title_slug>/add_post/', views.add_post, name='add_post'),
 
+    path('profiles/', views.ListProfilesView.as_view(), name='list_profiles'),
 
 ]
