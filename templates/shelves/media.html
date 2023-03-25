@@ -62,7 +62,7 @@ Unknown
     </div>
 
     {% if user.is_authenticated %}
-    <a href="{% url 'shelves:add_post' media.slug %}"><Strong>Add Post?</Strong></a><br>
+    <a href="{% url 'shelves:add_post' media.type media.slug %}"><Strong>Add Post?</Strong></a><br>
     {% else %}
     <p>You need to be logged in to add a post. <a href="/accounts/login/"> <Strong>Log in</Strong> </a> </p>
     {% endif %}

@@ -20,11 +20,11 @@ urlpatterns = [
 
     path('media_collection/', views.list_medias, name='media_collection'),
 
-    path('media/<str:media_type>/<slug:media_title_slug>/', views.show_media, name='show_media'),
+    path('<str:media_type>/<slug:media_title_slug>/show_media', views.show_media, name='show_media'),
 
-    path('<slug:media_title_slug>/add_type_details/', views.add_type_details, name='add_type_details'),
+    path('<str:media_type>/<slug:media_title_slug>/add_type_details/', views.add_type_details, name='add_type_details'),
 
-    path('<slug:media_title_slug>/add_post/', views.add_post, name='add_post'),
+    path('<str:media_type>/<slug:media_title_slug>/add_post/', views.add_post, name='add_post'),
 
     path('profiles/', views.ListProfilesView.as_view(), name='list_profiles'),
 

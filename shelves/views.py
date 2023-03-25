@@ -32,7 +32,7 @@ def show_media(request, media_title_slug, media_type):
     context_dict = {}
     
     try:
-        media = Media.objects.get(slug=media_title_slug)
+        media = Media.objects.get(slug=media_title_slug, type=media_type)
         posts = Post.objects.filter(media=media)
         
         context_dict['media'] = media
@@ -77,7 +77,8 @@ def add_media(request):
             media = media_form.save(commit=False)
             media.user = request.user
             media.save()
-            return redirect(reverse('shelves:add_type_details', kwargs={'media_title_slug': media.slug}))
+            return redirect(reverse('shelves:add_type_details', kwargs={'media_title_slug': media.slug,
+                                                                        'media_type': media.type}))
 
         else:
             print(media_form.errors)
@@ -86,9 +87,9 @@ def add_media(request):
 
 
 @login_required
-def add_type_details(request, media_title_slug):
+def add_type_details(request, media_title_slug, media_type):
     try:
-        media = Media.objects.get(slug=media_title_slug)
+        media = Media.objects.get(slug=media_title_slug, type=media_type)
     except Media.DoesNotExist:
         media = None
 
@@ -125,9 +126,9 @@ def add_type_details(request, media_title_slug):
 
 
 @login_required
-def add_post(request, media_title_slug):
+def add_post(request, media_title_slug, media_type):
     try:
-        media = Media.objects.get(slug=media_title_slug)
+        media = Media.objects.get(slug=media_title_slug, type=media_type)
     except Media.DoesNotExist:
         media = None
 

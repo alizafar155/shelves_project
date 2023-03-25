@@ -69,7 +69,7 @@ class ShowMediaViewTests(TestCase):
     
     def test_show_media_view_displays_correct_avgscore(self):
         date = "2002-03-02"
-        type = 'Book'
+        type = 'book'
         test_user_one = create_user("bob", "bobpassword123", self)
         test_user_two = create_user("duncan", "bobpassword123", self)
         test_media = add_media('Harry Potter', test_user_one, date, type)

@@ -24,7 +24,7 @@ class Media(models.Model):
     TYPE_MAX_LENGTH = 50
 
     # Fields
-    title = models.CharField(max_length=TITLE_MAX_LENGTH, unique=True)
+    title = models.CharField(max_length=TITLE_MAX_LENGTH)
     type = models.CharField(max_length=TYPE_MAX_LENGTH, choices=TYPE_CHOICES)
     coverImage = models.ImageField(blank=True)
     writer = models.CharField(max_length=WRITER_MAX_LENGTH)
@@ -32,6 +32,9 @@ class Media(models.Model):
     releaseDate = models.DateField(blank=True, validators=[MaxValueValidator(limit_value=datetime.date.today())])
     avgScore = models.FloatField(default=0)
     
+    class Meta:
+        unique_together = ('title','type')
+
     # Keep track of avg. rating for media
     def updateAvgScore(self, media):
         posts = media.post_set.all()
@@ -51,7 +54,7 @@ class Media(models.Model):
         return self.title
     
     # Slug
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=False)
     
     def save(self, *args, **kwargs):
         self.type = self.type.lower()
