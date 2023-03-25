@@ -216,7 +216,7 @@ class ProfileView(View):
     @method_decorator(login_required)
     def post(self, request, username):
         try:
-            (user, user_profile, form) = self.get_user_details(username)
+            (user, user_profile, form,  posts, media_collection) = self.get_user_details(username)
         except TypeError:
             return redirect(reverse('shelves:index'))
 
@@ -231,7 +231,10 @@ class ProfileView(View):
 
         context_dict = {'user_profile': user_profile,
                         'selected_user': user,
-                        'form': form}
+                        'form': form,
+                        'posts': posts,
+                        'media_collection': media_collection,
+                        }
 
         return render(request, 'shelves/profile.html', context_dict)
 

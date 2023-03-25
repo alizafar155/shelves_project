@@ -43,7 +43,7 @@
         <div class="col-md-6">
             <div class="card mb-6">
                 <div class="card-body">
-                    <h2>Your Posts: {{ post.count }}</h2>
+                    <h2>Posts added: {{ post.count }}</h2>
                     <p class="card-text">
                     <ul class="list-group">
                         {% for post in posts %}
@@ -65,7 +65,7 @@
                             <div class="col-md-6">
                                 <div class="card mb-6">
                                     <div class="card-body" id="{{ type }}">
-                                        <h2>Your {{ type|title }}</h2>
+                                        <h2>{{ type|title }} added:</h2>
                                         <p class="card-text">
                                             {% if objects %}
                                             <ul class="list-group">
@@ -77,7 +77,7 @@
                                                 {% endfor %}
                                             </ul>
                                             {% else %}
-                                                <strong>You have not added {{ type }} to the website.</strong>
+                                                <strong>{{ selected_user.username }} has not added {{ type }} to the website.</strong>
                                             {% endif %}
                                         </p>
                                     </div>
