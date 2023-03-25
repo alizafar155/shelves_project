@@ -257,7 +257,11 @@ class ListProfilesView(View):
                     {'user_profile_list': profiles})
 
 def about(request):
-    pass
+    context_dict = {}
+
+    return render(request, 'shelves/about.html', context=context_dict)
 
 def contact_us(request):
-    pass
+    context_dict = {}
+
+    return render(request, 'shelves/contact_us.html', context=context_dict)
