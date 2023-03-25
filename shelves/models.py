@@ -29,7 +29,7 @@ class Media(models.Model):
     coverImage = models.ImageField(blank=True)
     writer = models.CharField(max_length=WRITER_MAX_LENGTH)
     language = models.CharField(max_length=LANG_MAX_LENGTH)
-    releaseDate = models.DateField(blank=True, validators=[MaxValueValidator(limit_value=datetime.date.today)])
+    releaseDate = models.DateField(blank=True, validators=[MaxValueValidator(limit_value=datetime.date.today())])
     avgScore = models.FloatField(default=0)
     
     # Keep track of avg. rating for media

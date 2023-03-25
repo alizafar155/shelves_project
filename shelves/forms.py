@@ -34,7 +34,7 @@ class BookForm(forms.ModelForm):
 
 
 class MovieForm(forms.ModelForm):
-        duration = forms.DurationField(help_text="Please enter the duration of the movie")
+        duration = forms.DurationField(help_text="Please enter the duration of the movie (H:MM:SS)")
         
         class Meta:
             model = Movie
@@ -51,7 +51,7 @@ class ShowForm(forms.ModelForm):
 
 
 class SongForm(forms.ModelForm):
-        duration = forms.DurationField(help_text="Please enter the duration of the song")
+        duration = forms.DurationField(help_text="Please enter the duration of the song (H:MM:SS)")
         
         class Meta:
             model = Song
