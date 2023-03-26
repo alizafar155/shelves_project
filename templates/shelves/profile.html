@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    {{ selected_user.username }}'s Profile
+{{ selected_user.username }}'s Profile
 {% endblock %}
 
 {% block body_block %}
@@ -37,6 +37,43 @@
                 <button type="submit" class="btn btn-danger">Delete Account</button>
             </form>
             <br>
+            <div class="col-md-6">
+                <div class="card mb-6">
+                    <div class="card-body">
+                        Friend Requests:
+                        {% if incoming_friend_requests %}
+                        <ul class="list-group">
+                            {% for request in incoming_friend_requests %}
+                            <li>
+                                <a href="{% url 'shelves:profile' request.username %}">
+                                    {{ request.username }}
+                                </a>
+                                <form action="{% url 'shelves:accept_friend_request' request.username %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-secondary btn-sm">Accept Friend
+                                        Request</button>
+                                </form>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% elif inbound_friend_request %}
+            <form action="{% url 'shelves:accept_friend_request' selected_user.username %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary btn-sm">Accept Friend Request</button>
+            </form>
+            {% elif outbound_friend_request %}
+            <strong>Your friend request to {{ selected_user.username }} has been sent!</strong>
+            {% elif self not in selected_user_friends %}
+            <form action="{% url 'shelves:send_friend_request' selected_user.username %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary btn-sm">Send Friend Request</button>
+            </form>
+            {% else %}
+            <strong>You and {{ selected_user.username }} are friends!</strong>
             {% endif %}
         </div>
 
@@ -60,31 +97,32 @@
         <div class="panel-body">
             <div class="list-group">
                 {% for type, objects in media_collection.items %}
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="card mb-6">
-                                    <div class="card-body" id="{{ type }}">
-                                        <h2>{{ type|title }} added:</h2>
-                                        <p class="card-text">
-                                            {% if objects %}
-                                            <ul class="list-group">
-                                                {% for object in objects %}
-                                                <li class="list-group-item">
-                                                    <a href="{% url 'shelves:show_media' object.type object.slug %}">
-                                                        {{ object.title }}</a>
-                                                </li>
-                                                {% endfor %}
-                                            </ul>
-                                            {% else %}
-                                                <strong>{{ selected_user.username }} has not added {{ type }} to the website.</strong>
-                                            {% endif %}
-                                        </p>
-                                    </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-6">
+                                <div class="card-body" id="{{ type }}">
+                                    <h2>{{ type|title }} added:</h2>
+                                    <p class="card-text">
+                                        {% if objects %}
+                                    <ul class="list-group">
+                                        {% for object in objects %}
+                                        <li class="list-group-item">
+                                            <a href="{% url 'shelves:show_media' object.type object.slug %}">
+                                                {{ object.title }}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% else %}
+                                    <strong>{{ selected_user.username }} has not added {{ type }} to the
+                                        website.</strong>
+                                    {% endif %}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% endfor %}
             </div>
         </div>

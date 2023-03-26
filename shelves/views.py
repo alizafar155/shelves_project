@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from shelves.models import Media, Book, Movie, Show, Song, Post, UserProfile
+from shelves.models import Media, Book, Movie, Show, Song, Post, UserProfile, FriendRequest
 from shelves.forms import MediaForm, BookForm, MovieForm, ShowForm, SongForm, PostForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
@@ -179,7 +179,7 @@ def register_profile(request):
 
 
 class ProfileView(View):
-    def get_user_details(self, username):
+    def get_user_details(self, username, request):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
@@ -190,18 +190,35 @@ class ProfileView(View):
         user_posts = Post.objects.filter(user = user.id)
         user_collection = Media.objects.filter(user = user.id)
 
-        my_dict = {}
-        my_dict['books'] = user_collection.filter(type='book')
-        my_dict['movies'] = user_collection.filter(type='movie')
-        my_dict['shows'] = user_collection.filter(type='show')
-        my_dict['songs'] = user_collection.filter(type='song')
+        media_dict = {}
+        media_dict['books'] = user_collection.filter(type='book')
+        media_dict['movies'] = user_collection.filter(type='movie')
+        media_dict['shows'] = user_collection.filter(type='show')
+        media_dict['songs'] = user_collection.filter(type='song')
+
+        friend_dict = {}
+        if request.user == user:
+            incoming_friend_requests = FriendRequest.objects.filter(receiver=user_profile.user)
+            friend_dict['incoming_friend_requests'] = [request.sender for request in list(incoming_friend_requests)]
         
-        return (user, user_profile, form, user_posts, my_dict)
+        else:
+            friend_dict['selected_user_friends'] = user_profile.friends.all()
+            friend_dict['self'] = UserProfile.objects.get(user=request.user)
+            try:
+                friend_dict['inbound_friend_request'] = FriendRequest.objects.get(receiver=request.user, sender=user_profile.user)
+            except:
+                friend_dict['inbound_friend_request'] = None
+            try:
+                friend_dict['outbound_friend_request'] = FriendRequest.objects.get(receiver=user_profile.user, sender=request.user)
+            except:
+                friend_dict['outbound_friend_request'] = None
+        
+        return (user, user_profile, form, user_posts, media_dict, friend_dict)
     
     @method_decorator(login_required)
     def get(self, request, username):
         try:
-            (user, user_profile, form, posts, media_collection) = self.get_user_details(username)
+            (user, user_profile, form, posts, media_collection, friend_dict) = self.get_user_details(username, request)
         except TypeError:
             return redirect(reverse('shelves:index'))
         
@@ -212,12 +229,13 @@ class ProfileView(View):
                         'media_collection': media_collection,
                         }
         
+        context_dict.update(friend_dict)
         return render(request, 'shelves/profile.html', context_dict)
     
     @method_decorator(login_required)
     def post(self, request, username):
         try:
-            (user, user_profile, form,  posts, media_collection) = self.get_user_details(username)
+            (user, user_profile, form,  posts, media_collection, friend_dict) = self.get_user_details(username, request)
         except TypeError:
             return redirect(reverse('shelves:index'))
 
@@ -236,7 +254,8 @@ class ProfileView(View):
                         'posts': posts,
                         'media_collection': media_collection,
                         }
-
+        
+        context_dict.update(friend_dict)
         return render(request, 'shelves/profile.html', context_dict)
 
 
@@ -249,6 +268,7 @@ def delete_account(request, username):
 
     return render(request, 'profile.html', {'user': user})
 
+
 class ListProfilesView(View):
     @method_decorator(login_required)
     def get(self, request):
@@ -257,12 +277,44 @@ class ListProfilesView(View):
                     'shelves/list_profiles.html',
                     {'user_profile_list': profiles})
 
+
 def about(request):
     context_dict = {}
 
     return render(request, 'shelves/about.html', context=context_dict)
 
+
 def contact_us(request):
     context_dict = {}
 
     return render(request, 'shelves/contact_us.html', context=context_dict)
+
+
+@login_required
+def send_friend_request(request, username):
+    sender = request.user
+    receiver = User.objects.get(username=username)
+    
+    FriendRequest.objects.get_or_create(sender=sender, receiver=receiver)
+    return redirect(reverse('shelves:profile', kwargs={'username':username}))
+
+
+@login_required
+def accept_friend_request(request, username):
+    receiver = request.user
+    sender = User.objects.get(username=username)
+
+    try:
+        friend_request = FriendRequest.objects.get(sender=sender, receiver=receiver)
+    except:
+        friend_request = None
+
+    if friend_request != None:
+        receiver = UserProfile.objects.get(user=receiver)
+        sender = UserProfile.objects.get(user=sender)
+        
+        sender.friends.add(receiver)
+        receiver.friends.add(sender)
+        friend_request.delete()
+    
+    return redirect(reverse('shelves:profile', kwargs={'username':username}))

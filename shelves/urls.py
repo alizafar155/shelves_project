@@ -28,4 +28,8 @@ urlpatterns = [
 
     path('profiles/', views.ListProfilesView.as_view(), name='list_profiles'),
 
+    path('<username>/send_friend_request/', views.send_friend_request, name='send_friend_request'),
+
+    path('<username>/accept_friend_request/', views.accept_friend_request, name='accept_friend_request'),
+
 ]

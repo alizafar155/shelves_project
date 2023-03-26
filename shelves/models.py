@@ -126,7 +126,6 @@ class Post(models.Model):
     publishDate = models.DateField(default=datetime.date.today)
     likes = models.IntegerField(default=0)
 
-    # Links user and media so that a user cannot have more than 1 post per media
     class Meta:
         unique_together = ('media','user')
     
@@ -146,6 +145,7 @@ class Post(models.Model):
 class UserProfile(models.Model):
     # FK
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    friends = models.ManyToManyField('UserProfile', blank=True)
 
     # Fields
     picture = models.ImageField(blank=True)
@@ -155,3 +155,12 @@ class UserProfile(models.Model):
     # To string
     def __str__(self):
         return self.user.username
+
+
+class FriendRequest(models.Model):
+    # FK
+    sender = models.ForeignKey(User, related_name='sender', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name='receiver', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('sender','receiver')
