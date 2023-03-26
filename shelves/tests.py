@@ -24,9 +24,9 @@ class IndexViewTests(TestCase):
         date = "2002-03-02"
         type = 'Book'
         test_user = create_user("bob", "bobpassword123", self)
-        add_media('Harry Potter', test_user, date, type)
-        add_media('Shrek', test_user, date, type)
-        add_media('Naruto', test_user, date, type)
+        add_media('Frozen', test_user, date, type)
+        add_media('Matilda', test_user, date, type)
+        add_media('Macbeth', test_user, date, type)
         response = self.client.get(reverse('shelves:index'))
         self.assertEqual(response.status_code, 200)
 
@@ -34,21 +34,21 @@ class IndexViewTests(TestCase):
         date = "2002-03-02"
         type = 'Book'
         test_user = create_user("bob", "bobpassword123", self)
-        add_media('Harry Potter', test_user, date, type)
-        add_media('Shrek', test_user, date, type)
-        add_media('Naruto', test_user, date, type)
+        add_media('Frozen', test_user, date, type)
+        add_media('Matilda', test_user, date, type)
+        add_media('Macbeth', test_user, date, type)
         response = self.client.get(reverse('shelves:index'))
-        self.assertContains(response, "Harry Potter")
-        self.assertContains(response, "Shrek")
-        self.assertContains(response, "Naruto")
+        self.assertContains(response, "Frozen")
+        self.assertContains(response, "Matilda")
+        self.assertContains(response, "Macbeth")
 
     def test_index_view_with_media_count(self):
         date = "2002-03-02"
         type = 'Book'
         test_user = create_user("bob", "bobpassword123", self)
-        add_media('Harry Potter', test_user, date, type)
-        add_media('Shrek', test_user, date, type)
-        add_media('Naruto', test_user, date, type)
+        add_media('Frozen', test_user, date, type)
+        add_media('Matilda', test_user, date, type)
+        add_media('Macbeth', test_user, date, type)
         response = self.client.get(reverse('shelves:index'))
         num_medias = len(response.context['medias'])
         self.assertEquals(num_medias, 3)
@@ -60,7 +60,7 @@ class ShowMediaViewTests(TestCase):
         type = 'Book'
         test_user_one = create_user("bob", "bobpassword123", self)
         test_user_two = create_user("duncan", "bobpassword123", self)
-        test_media = add_media('Harry Potter', test_user_one, date, type)
+        test_media = add_media('Frozen', test_user_one, date, type)
         add_post(test_media, test_user_one, "I enjoyed it", 3)
         add_post(test_media, test_user_two, "I did not enjoy it", 5)
         response = self.client.get(reverse('shelves:show_media', kwargs={'media_type': type,
@@ -72,7 +72,7 @@ class ShowMediaViewTests(TestCase):
         type = 'book'
         test_user_one = create_user("bob", "bobpassword123", self)
         test_user_two = create_user("duncan", "bobpassword123", self)
-        test_media = add_media('Harry Potter', test_user_one, date, type)
+        test_media = add_media('Frozen', test_user_one, date, type)
         add_post(test_media, test_user_one, "I enjoyed it", 3)
         add_post(test_media, test_user_two, "I did not enjoy it", 2)
         response = self.client.get(reverse('shelves:show_media', kwargs={'media_type': type,
@@ -108,7 +108,7 @@ class ProfileViewTests(TestCase):
         date = "2002-03-02"
         type = 'Book'
         test_user = create_user("bob", "bobpassword123", self)
-        test_media = add_media('Harry Potter', test_user, date, type)
+        test_media = add_media('Frozen', test_user, date, type)
         add_post(test_media, test_user, "I enjoyed it", 3)
         response = self.client.get(reverse('shelves:profile', kwargs={'username': test_user.username}))
         self.assertEqual(response.status_code, 200)
@@ -117,33 +117,52 @@ class ProfileViewTests(TestCase):
         date = "2002-03-02"
         type = 'Book'
         test_user = create_user("bob", "bobpassword123", self)
-        test_media_one = add_media('Harry Potter', test_user, date, type)
-        test_media_two = add_media('Shrek', test_user, date, type)
+        test_media_one = add_media('Frozen', test_user, date, type)
+        test_media_two = add_media('Matilda', test_user, date, type)
         add_post(test_media_one, test_user, "I enjoyed it", 3)
         add_post(test_media_two, test_user, "I did not enjoy it", 2)
         response = self.client.get(reverse('shelves:profile', kwargs={'username': test_user.username}))
         num_posts = len(response.context['posts'])
         self.assertEquals(num_posts, 2)
 
+    def test_user_profile_view_with_friends_with_status(self):
+        test_user_one = create_user_profile("bob", "bobpassword123", self)
+        test_user_two = create_user_profile("duncan", "duncanpassword123", self)
+        test_user_three = create_user_profile("james", "duncanpassword123", self)
+        add_friends(test_user_one, test_user_two)
+        add_friends(test_user_one, test_user_three)
+        response = self.client.get(reverse('shelves:profile', kwargs={'username': test_user_one.user.username}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_profile_view_with_friends_count(self):
+        test_user_one = create_user_profile("bob", "bobpassword123", self)
+        test_user_two = create_user_profile("duncan", "duncanpassword123", self)
+        test_user_three = create_user_profile("james", "duncanpassword123", self)
+        add_friends(test_user_one, test_user_two)
+        add_friends(test_user_one, test_user_three)
+        response = self.client.get(reverse('shelves:profile', kwargs={'username': test_user_one.user.username}))
+        num_friends = len(response.context['selected_user_friends'])
+        self.assertEqual(num_friends, 2)
+
 
 class ListMediasViewTests(TestCase):
-    def test_media_collection_view_with_media_status(self):
+    def test_list_media_view_with_media_status(self):
         date = "2002-03-02"
         type = 'Book'
         test_user = create_user("bob", "bobpassword123", self)
-        add_media('Harry Potter', test_user, date, type)
-        response = self.client.get(reverse('shelves:media_collection'))
+        add_media('Frozen', test_user, date, type)
+        response = self.client.get(reverse('shelves:list_media'))
         self.assertEqual(response.status_code, 200)
     
-    def test_media_collection_view_with_media_title(self):
+    def test_list_media_view_with_media_title(self):
         date = "2002-03-02"
         type = 'Book'
         test_user = create_user("bob", "bobpassword123", self)
-        test_media = add_media('Harry Potter', test_user, date, type)
-        response = self.client.get(reverse('shelves:media_collection'))
+        test_media = add_media('Frozen', test_user, date, type)
+        response = self.client.get(reverse('shelves:list_media'))
         self.assertContains(response, 'books')
 
-    def test_media_collection_view_with_media_count(self):
+    def test_list_media_view_with_media_count(self):
         date = "2002-03-02"
         type = 'Book'
         test_user = create_user("bob", "bobpassword123", self)
@@ -157,11 +176,11 @@ class ListMediasViewTests(TestCase):
         add_book(test_media_three, 1234567890123)
         add_book(test_media_four, 1234567890123)
 
-        response = self.client.get(reverse('shelves:media_collection'))
+        response = self.client.get(reverse('shelves:list_media'))
         num_media = len([media for media in response.context['media_collection']['books'].values()])
         self.assertEqual(num_media, 4)
 
-    def test_media_collection_view_with_song_type_count(self):
+    def test_list_media_view_with_song_type_count(self):
         songType = 'Song'
         bookType = 'Book'
         date = "2002-03-02"
@@ -181,14 +200,10 @@ class ListMediasViewTests(TestCase):
         add_song(test_media_five,)
         add_song(test_media_six,)
         
-        response = self.client.get(reverse('shelves:media_collection'))
+        response = self.client.get(reverse('shelves:list_media'))
         num_songs = len(response.context['media_collection']['songs'])
         self.assertEqual(num_songs, 4)
 
-    
-
-
-# Helper Methods
 
 def add_media(title, user, releaseDate, type):
     media = Media.objects.get_or_create(title=title, user=user, releaseDate=releaseDate)[0]
@@ -237,3 +252,7 @@ def create_user_profile(username, password, self):
     user = UserProfile.objects.get_or_create(user=user)[0]
     user.save()
     return user
+
+def add_friends(user_one, user_two):
+    user_one.friends.add(user_two)
+    user_two.friends.add(user_one)

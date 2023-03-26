@@ -2,18 +2,19 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    Add Type
+Add {{ media.type|title }} - Further Details
 {% endblock %}
 
 {% block body_block %}
 <div class="jumbotron p-4">
     <div class="container">
-        <h1 class="jumbotron-heading">Add Type</h1>
+        <h1 class="jumbotron-heading">Add {{ media.type|title }} - Further Details</h1>
     </div>
 </div>
 <div class="container">
     <div class="row">
-        <form role="form" id="type_form" method="post" action="{% url 'shelves:add_type_details' media.type media.slug %}">
+        <form role="form" id="details_form" method="post"
+            action="{% url 'shelves:add_details' media.type media.slug %}">
             {% csrf_token %}
             {% for hidden in form.hidden_fields %}
             {{ hidden }}

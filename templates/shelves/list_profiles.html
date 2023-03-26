@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    User Profiles
+User Profiles
 {% endblock %}
 
 {% block body_block %}
@@ -17,12 +17,12 @@
         <div class="panel-body">
             <div class="list-group">
                 {% for user_profile in user_profile_list %}
-                    <div class="list-group-item">
-                        <h4 class="list-group-item-heading">
-                            <a href="{% url 'shelves:profile' user_profile.user.username %}">
-                                {{ user_profile.user.username }}
-                            </a>
-                        </h4>
+                <div class="list-group-item">
+                    <h4 class="list-group-item-heading">
+                        <a href="{% url 'shelves:profile' user_profile.user.username %}">
+                            {{ user_profile.user.username }}
+                        </a>
+                    </h4>
                     {% if user_profile.picture %}
                     <img src="{{ MEDIA_URL }}{{ user_profile.picture }}" width="64" height="64"
                         alt="{{ user_profile.user.username }}'s profile image" />
@@ -30,12 +30,13 @@
                     <img src="{% static 'images/anon.png' %}" width="64" height="64"
                         alt="{{ user_profile.user.username }}'s profile image" />
                     {% endif %}
-                    </div>
+                </div>
                 {% endfor %}
             </div>
         </div>
         {% else %}
-        <p>There are no registered users at Shelves. Be the first to sign up! <a href="{% url 'registration_register' %}"> <Strong>Sign up here!</Strong></p>
+        <p>There are no registered users at Shelves. Be the first to sign up! <a
+                href="{% url 'registration_register' %}"> <Strong>Sign up here!</Strong></p>
         {% endif %}
     </div>
 </div>

@@ -45,7 +45,7 @@ def show_media(request, media_title_slug, media_type):
     return render(request, 'shelves/media.html', context=context_dict)
 
 
-def list_medias(request):
+def list_media(request):
     media_collection = {}
 
     book_list = Book.objects.all()
@@ -61,7 +61,7 @@ def list_medias(request):
     context_dict = {}
     context_dict['media_collection'] = media_collection
     
-    response = render(request, 'shelves/media_collection.html', context=context_dict)
+    response = render(request, 'shelves/list_media.html', context=context_dict)
 
     return response
 
@@ -77,9 +77,8 @@ def add_media(request):
             media = media_form.save(commit=False)
             media.user = request.user
             media.save()
-            return redirect(reverse('shelves:add_type_details', kwargs={'media_title_slug': media.slug,
-                                                                        'media_type': media.type}))
-
+            return redirect(reverse('shelves:add_details', kwargs={'media_title_slug': media.slug,
+                                                                   'media_type': media.type}))
         else:
             print(media_form.errors)
 
@@ -87,7 +86,7 @@ def add_media(request):
 
 
 @login_required
-def add_type_details(request, media_title_slug, media_type):
+def add_details(request, media_title_slug, media_type):
     try:
         media = Media.objects.get(slug=media_title_slug, type=media_type)
     except Media.DoesNotExist:
@@ -122,7 +121,7 @@ def add_type_details(request, media_title_slug, media_type):
             print(type_form.errors)
 
     context_dict = {'form': type_form, 'media': media}
-    return render(request, 'shelves/add_type_details.html', context=context_dict)
+    return render(request, 'shelves/add_details.html', context=context_dict)
 
 
 @login_required
@@ -284,10 +283,10 @@ def about(request):
     return render(request, 'shelves/about.html', context=context_dict)
 
 
-def contact_us(request):
+def contact(request):
     context_dict = {}
 
-    return render(request, 'shelves/contact_us.html', context=context_dict)
+    return render(request, 'shelves/contact.html', context=context_dict)
 
 
 @login_required

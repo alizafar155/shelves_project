@@ -17,7 +17,7 @@
         <img src="{{ MEDIA_URL }}{{ user_profile.picture }}" width="150" height="150"
             alt="{{ selected_user.username }}'s profile image" />
         {% else %}
-        <img src="{% static 'images/anonUser.png' %}" width="200" height="200"
+        <img src="{% static 'images/anonUser.png' %}" width="150" height="150"
             alt="{{ selected_user.username }}'s profile image" />
         {% endif %}
         <br>
@@ -37,29 +37,6 @@
                 <button type="submit" class="btn btn-danger">Delete Account</button>
             </form>
             <br>
-            <div class="col-md-6">
-                <div class="card mb-6">
-                    <div class="card-body">
-                        Friend Requests:
-                        {% if incoming_friend_requests %}
-                        <ul class="list-group">
-                            {% for request in incoming_friend_requests %}
-                            <li>
-                                <a href="{% url 'shelves:profile' request.username %}">
-                                    {{ request.username }}
-                                </a>
-                                <form action="{% url 'shelves:accept_friend_request' request.username %}" method="post">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-secondary btn-sm">Accept Friend
-                                        Request</button>
-                                </form>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
             {% elif inbound_friend_request %}
             <form action="{% url 'shelves:accept_friend_request' selected_user.username %}" method="post">
                 {% csrf_token %}
@@ -93,6 +70,34 @@
                 </div>
             </div>
         </div>
+
+        {% if selected_user == user %}
+        <div class="col-md-6">
+            <div class="card mb-6">
+                <div class="card-body">
+                    <strong>Friend Requests:</strong>
+                    {% if incoming_friend_requests %}
+                    <ul class="list-group">
+                        {% for request in incoming_friend_requests %}
+                        <li>
+                            <a href="{% url 'shelves:profile' request.username %}">
+                                {{ request.username }}
+                            </a>
+                            <form action="{% url 'shelves:accept_friend_request' request.username %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-secondary btn-sm">Accept Friend
+                                    Request</button>
+                            </form>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    You don't have any incoming friend requests.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
 
         <div class="panel-body">
             <div class="list-group">
