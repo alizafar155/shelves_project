@@ -33,7 +33,7 @@ SECRET_KEY = key
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['alizafar155.pythonanywhere.com', '127.0.0.1']
+ALLOWED_HOSTS = ['alizafar123.pythonanywhere.com']
 
 
 
