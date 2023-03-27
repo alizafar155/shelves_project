@@ -41,10 +41,10 @@ def show_media(request, media_title_slug, media_type):
                 posts = []
                 if user_friends:
                     for friend in user_friends:
-                        posts.append(Post.objects.get(media=media, user=friend.user))
+                        posts = posts + list(Post.objects.filter(media=media, user=friend.user))
                 
                 # Since user and media are linked uniquely in Post model
-                posts.append(Post.objects.get(media=media, user=user.user))
+                posts = posts + list(Post.objects.filter(media=media, user=user.user))
         except:
             posts = None
         
