@@ -32,8 +32,21 @@ def show_media(request, media_title_slug, media_type):
     context_dict = {}
     
     try:
+        
         media = Media.objects.get(slug=media_title_slug, type=media_type)
-        posts = Post.objects.filter(media=media)
+        try:
+            if request.user:
+                user = UserProfile.objects.get_or_create(user=request.user)[0]
+                user_friends = user.friends.all()
+                posts = []
+                if user_friends:
+                    for friend in user_friends:
+                        posts.append(Post.objects.get(media=media, user=friend.user))
+                else:
+                    # Since user and media are linked uniquely in Post model
+                    posts.append(Post.objects.get(media=media, user=user.user))
+        except:
+            posts = None
         
         context_dict['media'] = media
         context_dict['posts'] = posts

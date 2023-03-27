@@ -54,6 +54,7 @@
             {% endif %}
         </div>
 
+        {% if selected_user == user %}
         <div class="col-md-6">
             <div class="card mb-6">
                 <div class="card-body">
@@ -70,8 +71,6 @@
                 </div>
             </div>
         </div>
-
-        {% if selected_user == user %}
         <div class="col-md-6">
             <div class="card mb-6">
                 <div class="card-body">
