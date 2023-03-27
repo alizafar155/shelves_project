@@ -46,6 +46,7 @@ Unknown
         <div class="col-md-2 themed-grid-col">Comment</div>
         <div class="col-md-2 themed-grid-col">Publish Date</div>
         <div class="col-md-2 themed-grid-col">Likes</div> <br>
+        <div class="col-md-2 themed-grid-col">Posted by</div> <br>
         <hr style="width:95%">
         {% if posts %}
         {% for post in posts %}
@@ -54,7 +55,8 @@ Unknown
         <div class="col-md-2 themed-grid-col">{{ post.comment }}</div>
         <div class="col-md-2 themed-grid-col">{{ post.publishDate }}</div>
         <div class="col-md-2 themed-grid-col">{{ post.likes }}</div>
-        <hr style="width:85%">
+        <div class="col-md-2 themed-grid-col">{{ post.user }}</div>
+        <hr style="width:95%">
         {% endfor %}
         {% else %}
         <strong>No posts have been uploaded for this {{ media.type|lower }}.</strong>
